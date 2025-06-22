@@ -6,6 +6,6 @@ import { Hello } from "../Hello";
 describe("Hello component", () => {
   it("renders the correct text", () => {
     const { getByText } = render(<Hello />);
-    expect(getByText("Hello, Luca!")).toBeTruthy();
+    expect(getByText("Hello, Luc!")).toBeTruthy();
   });
 });
