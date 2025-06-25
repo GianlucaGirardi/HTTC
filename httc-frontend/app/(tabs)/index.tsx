@@ -1,12 +1,29 @@
 import { Image } from "expo-image";
 import { Platform, StyleSheet } from "react-native";
-
+import { View, ActivityIndicator } from "react-native";
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useFetchEmptyClassesNow } from "@/hooks/useFetchEmptyClassesNow";
+import { ClassCard } from "@/components/ClassCard";
+import { ToasterNotification } from "@/components/ToasterNotification";
+import { ClassRoom } from "@/constants/Interface";
+
+interface data {}
 
 export default function HomeScreen() {
+  const { data, isLoading, isError } = useFetchEmptyClassesNow();
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#007bff" />
+        <ThemedText>Loading the application...</ThemedText>
+      </View>
+    );
+  }
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -17,44 +34,25 @@ export default function HomeScreen() {
         />
       }
     >
+      {isError && (
+        <ToasterNotification
+          message={"Data is still loading. Please try again soon."}
+          severity={"danger"}
+        />
+      )}
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">Available Classes</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
-          to see changes. Press{" "}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: "cmd + d",
-              android: "cmd + m",
-              web: "F12",
-            })}
-          </ThemedText>{" "}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">
-            npm run reset-project
-          </ThemedText>{" "}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{" "}
-          directory. This will move the current{" "}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
+        <ThemedText type="subtitle">List</ThemedText>
+        {data?.map((room: ClassRoom) => (
+          <ClassCard
+            key={room.roomId}
+            title={room.roomId}
+            description={room.classAvailable}
+          />
+        ))}
       </ThemedView>
     </ParallaxScrollView>
   );
