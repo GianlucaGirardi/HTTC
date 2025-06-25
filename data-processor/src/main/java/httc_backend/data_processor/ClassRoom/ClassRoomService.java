@@ -1,5 +1,6 @@
 package httc_backend.data_processor.ClassRoom;
 
+import httc_backend.data_processor.ClassRoom.FilterStrategies.FilterStrategy;
 import httc_backend.data_processor.Schedule.Schedule;
 import org.springframework.stereotype.Service;
 
@@ -9,20 +10,23 @@ import java.util.stream.Collectors;
 
 @Service
 public class ClassRoomService {
+    private final Map<String, FilterStrategy> filterStrategies;
     private final List<ClassRoom> classRooms;
     private final Set<String> classRoomSet;
     private boolean isClassroomsLoaded = false;
 
-    public ClassRoomService(){
+    public ClassRoomService(Map<String, FilterStrategy> filterStrategies){
         this.classRoomSet = new HashSet<>();
         this.classRooms = new ArrayList<>();
+        this.filterStrategies = filterStrategies;
     }
 
-    public List<ClassRoom> getEmptyClassRooms() {
+    public List<ClassRoom> getEmptyClassRooms(String filterStrategyKey) {
         if (!isClassroomsLoaded) {
             throw new IllegalStateException("Classroom data is loaded yet");
         }
-        return filterEmptyClassRooms(this.classRooms);
+        FilterStrategy filterStrategy = filterStrategies.get(filterStrategyKey);
+        return filterStrategy.filterEmptyClassRooms(classRooms);
     }
 
     public void mapSchedulesToClassRooms(List<Schedule> schedules)  {
@@ -42,10 +46,6 @@ public class ClassRoomService {
             }
         });
         setIsClassRoomsLoaded(true);
-    }
-
-    private List<ClassRoom> filterEmptyClassRooms(List<ClassRoom> classRooms){
-        return classRooms.stream().filter(ClassRoom::isClassAvailable).collect(Collectors.toList());
     }
 
     private List<String> getDaysOfTheWeek(Schedule schedule){
