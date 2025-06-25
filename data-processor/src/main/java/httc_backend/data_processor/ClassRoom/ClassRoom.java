@@ -30,12 +30,10 @@ public class ClassRoom {
         timeSlotList.add(new TimeSlot(LocalTime.parse(classStartTime, FORMATTER),LocalTime.parse(classEndTime, FORMATTER), daysOfTheWeek));
     }
 
-    public boolean isClassAvailable() {
-        String dayOfTheWeek = LocalDate.now().getDayOfWeek().toString().toLowerCase() + "s";
-        LocalTime now = LocalTime.now();
+    public boolean isClassAvailable(String dayOfTheWeek, LocalTime time) {
         return timeSlotList.stream()
                 .allMatch(slot ->
-                   !slot.getDaysOfTheWeek().contains(dayOfTheWeek) && (now.isBefore(slot.getClassStartTime()) || now.isAfter(slot.getClassEndTime()))
+                   !slot.getDaysOfTheWeek().contains(dayOfTheWeek) || (time.isBefore(slot.getClassStartTime()) || time.isAfter(slot.getClassEndTime()))
                 );
     }
 }
