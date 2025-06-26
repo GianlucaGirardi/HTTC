@@ -12,6 +12,7 @@ export const useFetchEmptyClassesNow = () =>
   });
 
 const getData = async () => {
-  const response = await axios.get(API_URL);
+  const body = {};
+  const response = await axios.post(`${API_URL}`, body);
   return response?.data;
 };
