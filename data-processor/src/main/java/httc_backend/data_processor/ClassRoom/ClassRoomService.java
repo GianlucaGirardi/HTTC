@@ -21,12 +21,12 @@ public class ClassRoomService {
         this.filterStrategies = filterStrategies;
     }
 
-    public List<ClassRoom> getEmptyClassRooms(String filterStrategyKey) {
+    public List<ClassRoom> getEmptyClassRooms(String filterStrategyKey, Map<String, Object> paramMap) {
         if (!isClassroomsLoaded) {
             throw new IllegalStateException("Classroom data is loaded yet");
         }
         FilterStrategy filterStrategy = filterStrategies.get(filterStrategyKey);
-        return filterStrategy.filterEmptyClassRooms(classRooms);
+        return filterStrategy.filterEmptyClassRooms(classRooms, paramMap);
     }
 
     public void mapSchedulesToClassRooms(List<Schedule> schedules)  {
@@ -37,7 +37,7 @@ public class ClassRoomService {
 
             if(!classRoomSet.contains(roomCode)){
                 classRoomSet.add(roomCode);
-                classRooms.add(new ClassRoom(roomCode, startTime, endTime, getDaysOfTheWeek(schedule)));
+                classRooms.add(new ClassRoom(roomCode, schedule.getLocationCode(), startTime, endTime, getDaysOfTheWeek(schedule)));
             }
             else{
                 Objects.requireNonNull(classRooms.stream().filter(item ->

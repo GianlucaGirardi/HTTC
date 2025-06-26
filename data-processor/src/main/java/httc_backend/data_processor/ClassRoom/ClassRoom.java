@@ -1,7 +1,6 @@
 package httc_backend.data_processor.ClassRoom;
 import httc_backend.data_processor.TimeSlot.TimeSlot;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -11,15 +10,21 @@ public class ClassRoom {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("HH.mm.ss");
     private final String roomId;
     private final List<TimeSlot> timeSlotList;
+    private final String locationCode;
 
-    public ClassRoom(String roomId, String classStartTime, String classEndTime, List<String> daysOfTheWeek){
+    public ClassRoom(String roomId, String locationCode, String classStartTime, String classEndTime, List<String> daysOfTheWeek){
         this.roomId = roomId;
         this.timeSlotList = new ArrayList<>();
+        this.locationCode = locationCode;
         this.addTimeSlot(classStartTime, classEndTime, daysOfTheWeek);
     }
 
     public String getRoomId() {
-        return roomId;
+        return this.roomId;
+    }
+
+    public String getLocationCode() {
+        return this.locationCode;
     }
 
     public void addTimeSlot(String classStartTime, String classEndTime, List<String> daysOfTheWeek){
